@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { projects } from "./data";
 
 export default function ProjectsPage() {
   return (
@@ -10,18 +11,17 @@ export default function ProjectsPage() {
         fontFamily: "sans-serif",
       }}
     >
-      <h1 style={{ fontSize: 36, marginBottom: 12 }}>프로젝트 목록</h1>
-      <p style={{ fontSize: 18, color: "#555", marginBottom: 24 }}>
+      <h1 style={{ fontSize: 48, marginBottom: 12 }}>프로젝트 목록</h1>
+      <p style={{ fontSize: 28, color: "#555", marginBottom: 24 }}>
         프로젝트 상세 페이지로 이동할 수 있습니다.
       </p>
 
       <div style={{ display: "grid", gap: 12 }}>
-        <Link href="/projects/demo" style={cardStyle}>
-          데모 프로젝트 열기
-        </Link>
-        <Link href="/projects/pilot" style={cardStyle}>
-          파일럿 프로젝트 열기
-        </Link>
+        {projects.map((p) => (
+          <Link key={p.id} href={`/projects/${p.id}`} style={cardStyle}>
+            {p.name} 열기
+          </Link>
+        ))}
       </div>
 
       <div style={{ marginTop: 24 }}>
@@ -34,11 +34,13 @@ export default function ProjectsPage() {
 }
 
 const cardStyle: React.CSSProperties = {
-  border: "1px solid #dbe2ea",
-  borderRadius: 10,
-  padding: "14px 16px",
+  display: "block",
+  padding: "16px 18px",
+  border: "1px solid #cbd5e1",
+  borderRadius: 12,
   textDecoration: "none",
   color: "#0f172a",
   background: "#f8fafc",
-  fontSize: 18,
+  fontSize: 36,
+  fontWeight: 700,
 };
