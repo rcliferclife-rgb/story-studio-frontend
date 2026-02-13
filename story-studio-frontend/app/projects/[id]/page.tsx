@@ -6,6 +6,13 @@ type PageProps = {
   params: { id: string };
 };
 
+// 정적 배포(output: 'export') 대응
+export function generateStaticParams() {
+  return projects.map((p) => ({ id: p.id }));
+}
+
+export const dynamicParams = false;
+
 export default function ProjectDetailPage({ params }: PageProps) {
   const project = projects.find((p) => p.id === params.id);
 
@@ -28,109 +35,40 @@ export default function ProjectDetailPage({ params }: PageProps) {
         </Link>
       </div>
 
-      <h1 style={{ fontSize: 48, margin: "0 0 12px", letterSpacing: "-0.02em" }}>
-        프로젝트 상세:
-      </h1>
-      <p style={{ fontSize: 34, color: "#334155", marginBottom: 24 }}>
-        {project.summary}
-      </p>
+      <h1 style={{ fontSize: 56, margin: "0 0 12px" }}>프로젝트 상세:</h1>
+      <p style={{ fontSize: 38, color: "#334155", marginBottom: 24 }}>{project.summary}</p>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "320px 1fr",
-          gap: 16,
-        }}
-      >
-        {/* 좌측: ASSET */}
-        <aside
-          style={{
-            border: "1px solid #e2e8f0",
-            borderRadius: 16,
-            padding: 16,
-            background: "#f8fafc",
-          }}
-        >
-          <h3 style={{ fontSize: 32, margin: "0 0 14px" }}>ASSET ASSIGNMENT</h3>
-
+      <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: 16 }}>
+        <aside style={boxStyle}>
+          <h3 style={{ fontSize: 36, margin: "0 0 12px" }}>ASSET ASSIGNMENT</h3>
           <div style={{ display: "grid", gap: 10 }}>
-            {project.assets.map((a, idx) => (
-              <div
-                key={`${a.kind}-${a.title}-${idx}`}
-                style={{
-                  border: "1px solid #cbd5e1",
-                  borderRadius: 12,
-                  padding: 12,
-                  background: "#ffffff",
-                }}
-              >
-                <div style={{ fontSize: 18, color: "#64748b", marginBottom: 4 }}>{a.kind}</div>
-                <strong style={{ fontSize: 30 }}>{a.title}</strong>
+            {project.assets.map((a, i) => (
+              <div key={`${a.title}-${i}`} style={assetStyle}>
+                <div style={{ fontSize: 20, color: "#64748b", marginBottom: 4 }}>{a.kind}</div>
+                <strong style={{ fontSize: 34 }}>{a.title}</strong>
               </div>
             ))}
           </div>
 
-          <button
-            style={{
-              marginTop: 14,
-              width: "100%",
-              border: "none",
-              borderRadius: 12,
-              padding: "14px 16px",
-              fontSize: 26,
-              fontWeight: 700,
-              cursor: "pointer",
-              background: "#0f172a",
-              color: "white",
-            }}
-          >
-            스토리보드 렌더링(즉시 생성)
-          </button>
+          <button style={primaryBtn}>스토리보드 렌더링(즉시 생성)</button>
         </aside>
 
-        {/* 우측: 챕터/씬/메모 */}
-        <section style={{ display: "grid", gap: 16 }}>
-          <div
-            style={{
-              border: "1px solid #e2e8f0",
-              borderRadius: 16,
-              padding: 16,
-              background: "white",
-            }}
-          >
-            <h2 style={{ fontSize: 34, margin: "0 0 8px" }}>{project.chapter}</h2>
-            <p style={{ fontSize: 30, margin: "0 0 14px", color: "#334155" }}>
-              {project.chapterDescription}
-            </p>
+        <section style={{ display: "grid", gap: 14 }}>
+          <div style={boxStyle}>
+            <h3 style={{ fontSize: 40, margin: "0 0 8px" }}>{project.chapter}</h3>
+            <p style={{ fontSize: 34, margin: "0 0 14px" }}>{project.chapterDescription}</p>
 
-            <div style={{ display: "grid", gap: 10 }}>
-              {project.scenes.map((scene, idx) => (
-                <div
-                  key={`${scene.title}-${idx}`}
-                  style={{
-                    border: "1px solid #dbe2ea",
-                    borderRadius: 10,
-                    padding: 10,
-                    background: "#f8fafc",
-                  }}
-                >
-                  <strong style={{ fontSize: 35 }}>{scene.title}</strong>
-                  <p style={{ margin: "6px 0 0", fontSize: 30 }}>{scene.description}</p>
-                </div>
-              ))}
-            </div>
+            {project.scenes.map((s, i) => (
+              <div key={`${s.title}-${i}`} style={sceneStyle}>
+                <strong style={{ fontSize: 34 }}>{s.title}</strong>
+                <p style={{ fontSize: 30, margin: "6px 0 0" }}>{s.description}</p>
+              </div>
+            ))}
           </div>
 
-          <div
-            style={{
-              border: "1px solid #e2e8f0",
-              borderRadius: 16,
-              padding: 16,
-              background: "white",
-            }}
-          >
-            <h3 style={{ fontSize: 32, margin: "0 0 10px" }}>프롬프트 / 연출 메모</h3>
-            <ul style={{ margin: 0, paddingLeft: 24, fontSize: 30, lineHeight: 1.6 }}>
+          <div style={boxStyle}>
+            <h3 style={{ fontSize: 40, margin: "0 0 10px" }}>프롬프트 / 연출 메모</h3>
+            <ul style={{ margin: 0, paddingLeft: 24, fontSize: 34, lineHeight: 1.6 }}>
               <li>장르: {project.memo.genre}</li>
               <li>비율: {project.memo.ratio}</li>
               <li>스타일: {project.memo.style}</li>
@@ -138,18 +76,11 @@ export default function ProjectDetailPage({ params }: PageProps) {
             </ul>
           </div>
 
-          <div
-            style={{
-              border: "1px solid #e2e8f0",
-              borderRadius: 16,
-              padding: 16,
-              background: "white",
-            }}
-          >
-            <h3 style={{ fontSize: 32, margin: "0 0 10px" }}>다음 작업</h3>
-            <ol style={{ margin: 0, paddingLeft: 24, fontSize: 30, lineHeight: 1.6 }}>
-              {project.nextTasks.map((task, idx) => (
-                <li key={`${task}-${idx}`}>{task}</li>
+          <div style={boxStyle}>
+            <h3 style={{ fontSize: 40, margin: "0 0 10px" }}>다음 작업</h3>
+            <ol style={{ margin: 0, paddingLeft: 24, fontSize: 34, lineHeight: 1.6 }}>
+              {project.nextTasks.map((t, i) => (
+                <li key={`${t}-${i}`}>{t}</li>
               ))}
             </ol>
           </div>
@@ -158,3 +89,38 @@ export default function ProjectDetailPage({ params }: PageProps) {
     </main>
   );
 }
+
+const boxStyle: React.CSSProperties = {
+  border: "1px solid #dbe2ea",
+  borderRadius: 16,
+  padding: 16,
+  background: "#f8fafc",
+};
+
+const assetStyle: React.CSSProperties = {
+  border: "1px solid #dbe2ea",
+  borderRadius: 12,
+  padding: 12,
+  background: "#f1f5f9",
+};
+
+const sceneStyle: React.CSSProperties = {
+  border: "1px solid #dbe2ea",
+  borderRadius: 12,
+  padding: 12,
+  background: "#f1f5f9",
+  marginBottom: 10,
+};
+
+const primaryBtn: React.CSSProperties = {
+  marginTop: 12,
+  width: "100%",
+  border: "none",
+  borderRadius: 12,
+  padding: "14px 16px",
+  background: "#0f172a",
+  color: "#fff",
+  fontSize: 28,
+  fontWeight: 700,
+  cursor: "pointer",
+};
